@@ -1,9 +1,5 @@
 export type Answer = {
+    id: number;
     text: string;
-    username: string;
-}
-
-export type Question = {
-    description: string;
-    author: string;
-}
+    usernames: string[];
+};
