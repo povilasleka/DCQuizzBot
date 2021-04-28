@@ -1,6 +1,6 @@
 export type Answer = {
     text: string;
-    usernames: string;
+    username: string;
 }
 
 export type Question = {

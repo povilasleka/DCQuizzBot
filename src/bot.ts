@@ -9,7 +9,7 @@ export class Bot {
     private client: Client;
     private readonly token: string;
     private quiz: Quiz;
-    private incomingMessage: Message;
+    private message: Message;
 
     constructor(
         @inject(TYPES.Client) client: Client,
@@ -22,15 +22,24 @@ export class Bot {
     public listen(): Promise<string> 
     {
         this.client.on('message', (message: Message) => {
-            this.incomingMessage = message;
+            this.message = message;
             
-            let command: string = message.content.split(" ")[0];
+            let command: string = this.message.content.split(" ")[0];
             
             if (command === "!quiz")
             {
-                let question: string = message.content.substr(6, message.content.length);
+                let question: string = this.message.content.substr(6, this.message.content.length);
                 console.log("Quiz command initiated!");
-                this.startQuiz(question, message.author.username);
+                this.startQuiz(question, this.message.author.username);
+            }
+            else if (command === "!answ")
+            {
+                let answer: string = this.message.content.substr(6, this.message.content.length);
+                console.log("Quiz answer initiated!");
+                this.quiz.addAnswer({
+                    username: this.message.author.username,
+                    text: answer
+                });
             }
         });
 
@@ -48,7 +57,7 @@ export class Bot {
         this.quiz = new Quiz({ description: question, author });
 
         this.sendMessage(
-            "[+] Quiz by " + this.incomingMessage.author.username + "\n" +
+            "[+] Quiz by " + this.message.author.username + "\n" +
             question + "\n" +
             "Answer with command !answer [your text]"
         );
@@ -56,6 +65,6 @@ export class Bot {
 
     private sendMessage(message: string)
     {
-        this.incomingMessage.channel.send(message);
+        this.message.channel.send(message);
     }
 }
